@@ -8,6 +8,7 @@ import org.jfree.data.xy.XYDataset;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -43,12 +44,12 @@ public class StatisticsFlatAvito {
         this.date = date;
     }
 
-    public static XYDataset createTimeSeriesCollection(List<StatisticsFlatAvito> list) {
+    public static XYDataset createTimeSeriesCollection(List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities) {
 
         final TimeSeriesCollection dataset = new TimeSeriesCollection( );
 
-        for (String s:FlatAvito.link.keySet()) {
-            List<StatisticsFlatAvito> sFAList  = list.stream().filter(sFA -> sFA.getCity().equals(s)).collect(Collectors.toList());
+        for (String s: cities) {
+            List<StatisticsFlatAvito> sFAList  = statisticsFlatAvitoList.stream().filter(sFA -> sFA.getCity().equals(s)).collect(Collectors.toList());
             TimeSeries series = new TimeSeries(s);
             for (StatisticsFlatAvito f : sFAList) {
                 Hour hour = new Hour(new Date(f.getDate()));

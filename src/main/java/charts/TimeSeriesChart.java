@@ -1,9 +1,11 @@
 package charts;
 
 import db.StatisticsFlatAvitoDAO;
+import model.FlatAvito;
 import model.StatisticsFlatAvito;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -11,19 +13,23 @@ import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.xy.XYDataset;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class TimeSeriesChart extends ApplicationFrame {
-
+    JFreeChart chart;
     public TimeSeriesChart(final String title ) {
         super( title );
         StatisticsFlatAvitoDAO statisticsFlatAvitoDAO = new StatisticsFlatAvitoDAO();
-        XYDataset dataset = StatisticsFlatAvito.createTimeSeriesCollection(statisticsFlatAvitoDAO.getAllDataList());
-        final JFreeChart chart = createChart( dataset );
-        final ChartPanel chartPanel = new ChartPanel( chart );
+        XYDataset dataset = StatisticsFlatAvito.createTimeSeriesCollection(statisticsFlatAvitoDAO.getAllDataList(), FlatAvito.link.keySet());
+        chart = createChart( dataset );
 
-        chartPanel.setPreferredSize( new Dimension( 1000 , 600 ) );
-        chartPanel.setMouseZoomable( true , false );
-        setContentPane( chartPanel );
+        // Для создания окна
+//        final ChartPanel chartPanel = new ChartPanel( chart );
+
+//        chartPanel.setPreferredSize( new Dimension( 1000 , 600 ) );
+//        chartPanel.setMouseZoomable( true , false );
+//        setContentPane( chartPanel );
 
         final XYPlot plot = chart.getXYPlot( );
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
@@ -35,7 +41,7 @@ public class TimeSeriesChart extends ApplicationFrame {
         renderer.setSeriesStroke( 2 , new BasicStroke( 2.0f ) );
         //renderer.setDefaultShapesVisible(false);
         plot.setRenderer( renderer );
-        setContentPane( chartPanel );
+//        setContentPane( chartPanel );
     }
 
     private JFreeChart createChart( final XYDataset dataset ) {
@@ -49,10 +55,15 @@ public class TimeSeriesChart extends ApplicationFrame {
                 false);
     }
 
-    public static void main( final String[ ] args ) {
+    public static void main( final String[ ] args ) throws IOException {
         final String title = "Авито статистика";
         final TimeSeriesChart demo = new TimeSeriesChart( title );
-        demo.pack( );
-        demo.setVisible( true );
+        // Для создания окна
+//        demo.pack( );
+//        demo.setVisible( true );
+        int width = 3472/4;
+        int height = 4624/4;
+        File timeChart = new File( "TimeChart.jpeg" );
+        ChartUtils.saveChartAsJPEG( timeChart, demo.chart, width, height );
     }
 }
