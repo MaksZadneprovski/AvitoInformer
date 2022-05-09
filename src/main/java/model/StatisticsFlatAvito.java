@@ -27,8 +27,9 @@ public class StatisticsFlatAvito {
     private long medianPrice3;
     private String city;
     private long date;
+    private long countFlats;
 
-    public StatisticsFlatAvito(int dollar, long averagePriceMeter, long medianPriceMeter,long averagePrice, long medianPrice, long averagePrice1, long medianPrice1, long averagePrice2, long medianPrice2, long averagePrice3, long medianPrice3, String city, long date) {
+    public StatisticsFlatAvito(int dollar, long averagePriceMeter, long medianPriceMeter,long averagePrice, long medianPrice, long averagePrice1, long medianPrice1, long averagePrice2, long medianPrice2, long averagePrice3, long medianPrice3, String city, long date,long countFlats) {
         this.dollar = dollar;
         this.averagePriceMeter = averagePriceMeter;
         this.medianPriceMeter = medianPriceMeter;
@@ -42,9 +43,10 @@ public class StatisticsFlatAvito {
         this.medianPrice3 = medianPrice3;
         this.city = city;
         this.date = date;
+        this.countFlats = countFlats;
     }
 
-    public static XYDataset createTimeSeriesCollection(List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities) {
+    public static XYDataset createTimeSeriesCollection(List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities, Yaxis yaxis) {
 
         final TimeSeriesCollection dataset = new TimeSeriesCollection( );
 
@@ -54,7 +56,42 @@ public class StatisticsFlatAvito {
             for (StatisticsFlatAvito f : sFAList) {
                 Hour hour = new Hour(new Date(f.getDate()));
 
-                series.addOrUpdate(hour, f.getAveragePrice());
+                switch (yaxis){
+                    case MedianPrice:
+                        series.addOrUpdate(hour, f.getMedianPrice());
+                        break;
+                    case MedianPrice1:
+                        series.addOrUpdate(hour, f.getMedianPrice1());
+                        break;
+                    case MedianPrice2:
+                        series.addOrUpdate(hour, f.getMedianPrice2());
+                        break;
+                    case MedianPrice3:
+                        series.addOrUpdate(hour, f.getMedianPrice3());
+                        break;
+                    case AveragePrice:
+                        series.addOrUpdate(hour, f.getAveragePrice());
+                        break;
+                    case AveragePrice1:
+                        series.addOrUpdate(hour, f.getAveragePrice1());
+                        break;
+                    case AveragePrice2:
+                        series.addOrUpdate(hour, f.getAveragePrice2());
+                        break;
+                    case AveragePrice3:
+                        series.addOrUpdate(hour, f.getAveragePrice3());
+                        break;
+                    case AveragePriceMeter:
+                        series.addOrUpdate(hour, f.getAveragePriceMeter());
+                        break;
+                    case MedianPriceMeter:
+                        series.addOrUpdate(hour, f.getMedianPriceMeter());
+                        break;
+                    case CountFlats:
+                        series.addOrUpdate(hour, f.getCountFlats());
+                        break;
+                }
+
             }
             dataset.addSeries(series);
         }

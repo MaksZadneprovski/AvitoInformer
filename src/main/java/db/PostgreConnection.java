@@ -10,7 +10,6 @@ public class PostgreConnection {
     private static Connection DbConnection;
 
     public static Connection getFlatAvitoConnection(){
-        if (DbConnection == null){
             try {
                 Class.forName("org.postgresql.Driver");
                 String url = "jdbc:postgresql://46.173.219.119:5432/avito";
@@ -22,7 +21,7 @@ public class PostgreConnection {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+
         return DbConnection;
     }
 
