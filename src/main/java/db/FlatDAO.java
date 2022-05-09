@@ -5,20 +5,20 @@ import java.util.*;
 
 public class FlatDAO {
 
-    public List<String> getTopList(HashSet<String> cities) throws SQLException {
+    public List<String> getTopList(Set<String> cities) throws SQLException {
         Map<Long, String> treeMap = new TreeMap<>();
         try {
             Statement statement = PostgreConnection.getFlatAvitoConnection().createStatement();
             for (String city : cities) {
-                ResultSet rs = statement.executeQuery("SELECT price,href FROM flat WHERE city = '"+ city +"';");
+                ResultSet rs = statement.executeQuery("SELECT price,href FROM flat WHERE city = '"+ city +"Добавить Период недавно';");
                 while (rs.next()) {
                     treeMap.put(rs.getLong(1),rs.getString(2));
                 }
                 rs.close();
             }
             statement.close();
-        } finally {
-            PostgreConnection.getFlatAvitoConnection().close();
+        } catch (Exception e){
+            e.printStackTrace();
         }
         List<String> topList = new ArrayList<>();
         Set<Long> keySet = treeMap.keySet();

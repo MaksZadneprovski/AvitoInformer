@@ -1,15 +1,11 @@
-import org.apache.log4j.Logger;
-import org.telegram.telegrambots.ApiContextInitializer;
 import telegram.BotTG;
 import telegram.MessageReciever;
 import telegram.MessageSender;
 
 public class App {
-    private static final Logger log = Logger.getLogger(App.class);
 
     public static void main(String[] args) {
-        ApiContextInitializer.init();
-        BotTG botTG = new BotTG("ZadneprovskiBot", "2117503517:AAGLyu2PukHxITGpWR2pw8tcVBrnQ3ejE-4");
+        BotTG botTG = new BotTG("EstatePriceBot" , "5126773688:AAGDF2Fai5tyIa8-sbFOSWwDoRembo4UAuo");
         MessageReciever messageReciever = new MessageReciever(botTG);
         MessageSender messageSender = new MessageSender(botTG);
         botTG.botConnect();

@@ -2,32 +2,23 @@ package telegram;
 
 import charts.TimeSeriesChart;
 import db.FlatDAO;
-import model.Constans;
+import model.Data;
 import model.FlatAvito;
+import model.Periods;
 import model.Yaxis;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 public class MessageReciever implements Runnable {
     private BotTG bot;
     private final int WAIT_FOR_NEW_MESSAGE_DELAY = 1000;
-    HashSet<String> cities = new HashSet<>();
 
 
     public MessageReciever(BotTG bot) {
@@ -65,31 +56,83 @@ public class MessageReciever implements Runnable {
             message = update.getCallbackQuery().getMessage();
             inputText = update.getCallbackQuery().getData();
         }
-        Long chatId = message.getChatId();
-        String username = message.getFrom().getFirstName()+" "+message.getFrom().getLastName();
+        String chatId = String.valueOf(message.getChatId());
+        User user = Data.getUserById(Long.valueOf(chatId));
+        if (user == null){
+            String username = message.getFrom().getFirstName()+" "+message.getFrom().getLastName();
+            user = new User(Long.valueOf(chatId),username);
+            Data.settings.add(user);
+        }
+
         String finalInputText = inputText;
 
         if(inputText.equals("/start")){
-            bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId,username));
-        } else if (FlatAvito.link.keySet().contains(inputText) || inputText.equals("Выбрать все")){
-            cities.clear();
-            cities.add(inputText);
+            user.getCity().clear();//////////////////////////////
+        } else if (inputText.equals("/set_city")){
+            user.getCity().clear();
+            bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
+        }else if (inputText.equals("/add_city")) {
+            bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
+        }else if (inputText.equals("/set_period")){
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessagePeriod(chatId));
-        }else if (Constans.periods.contains(inputText)){
+        }
+        else if (inputText.equals("/set_parameter")){
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageYaxis(chatId));
-        }else if(Arrays.stream(Yaxis.values()).anyMatch(x->x.toString().equals(finalInputText))) {
-            try {
-                SendPhoto photoMessage = new SendPhoto().setNewPhoto(TimeSeriesChart.getJpeg(cities, Yaxis.valueOf(finalInputText))).setChatId(chatId);
-                bot.sendQueue.add(photoMessage);
-            } catch (IOException e) {
-                e.printStackTrace();
+        }else if(inputText.equals("/get")) {
+            StringBuilder stringBuilder = new StringBuilder("Открой меню бота и :");
+            boolean isSendPhoto = true;
+            if (user.getCity().isEmpty()){
+                stringBuilder.append("Выбери город");
+                isSendPhoto = false;
+
+            }if (user.getPeriod() == null){
+                stringBuilder.append("Выбери период");
+                isSendPhoto = false;
+
+            }if (user.getParameter() == null){
+                stringBuilder.append("Выбери параметр");
+                isSendPhoto = false;
+
+            }if (stringBuilder.length()>25){
+                bot.sendQueue.add(MessageTG.sendMyMessage(chatId, String.valueOf(stringBuilder)));
             }
-        }else if(inputText.equals("Топ")){
+            if (isSendPhoto) {
+                try {
+                    SendPhoto photoMessage = new SendPhoto();
+                    photoMessage.setPhoto(TimeSeriesChart.getJpeg(user.getCity(), user.getParameter()));
+                    photoMessage.setChatId(chatId);
+                    bot.sendQueue.add(photoMessage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        // City
+        else if (FlatAvito.link.keySet().contains(inputText)){
+            user.getCity().add(inputText);
+        }
+        // City
+        else if (inputText.equals("All City")){
+            user.setCity(FlatAvito.link.keySet());
+        }
+        // Parameter
+        else if (Arrays.stream(Yaxis.values()).anyMatch(x->x.toString().equals(finalInputText))){
+            user.setParameter(Yaxis.valueOf(inputText));
+        }
+        // Period
+        else if (Arrays.stream(Periods.values()).anyMatch(x->x.toString().equals(finalInputText))){
+            user.setPeriod(Periods.valueOf(inputText));
+        }
+        // Top 20
+        else if(inputText.equals("Top")){
+            // Нужно вывести только имеющиеся
             FlatDAO flatDAO = new FlatDAO();
             try {
-                List<String> listTop = flatDAO.getTopList(cities);
+                List<String> listTop = flatDAO.getTopList(user.getCity());
                 for (String s : listTop) {
-                    bot.sendQueue.add(MessageTG.sendTop(chatId,s));
+                    bot.sendQueue.add(MessageTG.sendMyMessage(chatId,s));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

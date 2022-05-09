@@ -1,9 +1,10 @@
 package telegram;
 
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.objects.Message;
+
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 
 public class MessageSender implements Runnable {
     private final int SENDER_SLEEP_TIME = 1000;
@@ -32,12 +33,12 @@ public class MessageSender implements Runnable {
             MessageType messageType = messageType(object);
             switch (messageType) {
                 case EXECUTE_MESSAGE:
-                    BotApiMethod<Message> message = (BotApiMethod<Message>) object;
+                    SendMessage message = (SendMessage) object;
                     bot.execute(message);
                     break;
                 case EXECUTE_PHOTO:
                     SendPhoto message2 = (SendPhoto) object;
-                    bot.sendPhoto(message2);
+                    bot.execute(message2);
                     break;
             }
         } catch (Exception e) {

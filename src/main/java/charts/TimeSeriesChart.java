@@ -11,6 +11,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.xy.XYDataset;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -61,21 +62,17 @@ public class TimeSeriesChart extends ApplicationFrame {
                 false);
     }
 
-    public static File getJpeg(Set<String> cities,Yaxis yaxis) throws IOException {
+    public static InputFile getJpeg(Set<String> cities,Yaxis yaxis) throws IOException {
         StatisticsFlatAvitoDAO statisticsFlatAvitoDAO = new StatisticsFlatAvitoDAO();
         String title = "Статистика квартир с авито";
         TimeSeriesChart timeSeriesChart = null;
-        if (cities.contains("Выбрать все")) {
-            ///////////////////////////////////////
-              timeSeriesChart = new TimeSeriesChart( title,statisticsFlatAvitoDAO.getAllDataList(), FlatAvito.link.keySet(),yaxis );
-        }else {
-              timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities), cities, yaxis);
-        }
+        timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities), cities, yaxis);
+
 
         int width = 3472/5;
         int height = 4624/5;
         File timeChart = new File( "TimeChart.jpeg" );
         ChartUtils.saveChartAsJPEG( timeChart, timeSeriesChart.chart, width, height );
-        return  timeChart;
+        return   new InputFile(timeChart);
     }
 }
