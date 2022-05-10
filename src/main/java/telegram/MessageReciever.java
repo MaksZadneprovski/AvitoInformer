@@ -58,12 +58,14 @@ public class MessageReciever implements Runnable {
         }
         String chatId = String.valueOf(message.getChatId());
         User user = Data.getUserById(Long.valueOf(chatId));
+        System.out.println(user);
+        System.out.println(chatId);
         if (user == null){
             String username = message.getFrom().getFirstName()+" "+message.getFrom().getLastName();
             user = new User(Long.valueOf(chatId),username);
             Data.settings.add(user);
         }
-
+        bot.sendQueue.add(MessageTG.getKeyboardButton(chatId));
         String finalInputText = inputText;
 
         if(inputText.equals("/start")){
@@ -79,18 +81,18 @@ public class MessageReciever implements Runnable {
         else if (inputText.equals("/set_parameter")){
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageYaxis(chatId));
         }else if(inputText.equals("/get")) {
-            StringBuilder stringBuilder = new StringBuilder("Открой меню бота и :");
+            StringBuilder stringBuilder = new StringBuilder("Открой меню бота и :\n");
             boolean isSendPhoto = true;
             if (user.getCity().isEmpty()){
-                stringBuilder.append("Выбери город");
+                stringBuilder.append("Выбери город\n");
                 isSendPhoto = false;
 
             }if (user.getPeriod() == null){
-                stringBuilder.append("Выбери период");
+                stringBuilder.append("Выбери период\n");
                 isSendPhoto = false;
 
             }if (user.getParameter() == null){
-                stringBuilder.append("Выбери параметр");
+                stringBuilder.append("Выбери параметр\n");
                 isSendPhoto = false;
 
             }if (stringBuilder.length()>25){
@@ -112,18 +114,23 @@ public class MessageReciever implements Runnable {
         // City
         else if (FlatAvito.link.keySet().contains(inputText)){
             user.getCity().add(inputText);
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Город добавлен"));
+            System.out.println(user.getPeriod());
         }
         // City
         else if (inputText.equals("All City")){
             user.setCity(FlatAvito.link.keySet());
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Города добавлены"));
         }
         // Parameter
         else if (Arrays.stream(Yaxis.values()).anyMatch(x->x.toString().equals(finalInputText))){
             user.setParameter(Yaxis.valueOf(inputText));
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Параметр установлен"));
         }
         // Period
         else if (Arrays.stream(Periods.values()).anyMatch(x->x.toString().equals(finalInputText))){
             user.setPeriod(Periods.valueOf(inputText));
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Период установлен"));
         }
         // Top 20
         else if(inputText.equals("Top")){

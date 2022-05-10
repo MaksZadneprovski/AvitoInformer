@@ -6,7 +6,10 @@ import model.Yaxis;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +49,7 @@ public class MessageTG {
         list.add(getInlineKeyboardButton("Год",String.valueOf(Periods.YEAR)));
         rowList.add(list);
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return getSendMessage(chatId,"А теперь период",inlineKeyboardMarkup);
+        return getSendMessageWithKeyboard(chatId,"А теперь период",inlineKeyboardMarkup);
     }
     public static SendMessage sendInlineKeyBoardMessageYaxis(String chatId){
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
@@ -92,7 +95,7 @@ public class MessageTG {
         rowList.add(list7);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return getSendMessage(chatId,"По какому параметру нужна статистика?",inlineKeyboardMarkup);
+        return getSendMessageWithKeyboard(chatId,"По какому параметру нужна статистика?",inlineKeyboardMarkup);
     }
 
 
@@ -102,7 +105,19 @@ public class MessageTG {
         ikb.setCallbackData(callbackData);
         return ikb;
     }
-    public static SendMessage getSendMessage(String chatId, String text, ReplyKeyboard replyKeyboard){
+    public static SendMessage getKeyboardButton(String chatId){
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        // Create the keyboard (list of keyboard rows)
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        // Create a keyboard row
+        KeyboardRow row = new KeyboardRow();
+        // Set each button, you can also use KeyboardButton objects if you need something else than text
+        row.add("Получить график");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        return getSendMessageWithKeyboard(chatId,"Запрос обрабатывается",keyboardMarkup );
+    }
+    public static SendMessage getSendMessageWithKeyboard(String chatId, String text, ReplyKeyboard replyKeyboard){
         SendMessage sm = new SendMessage();
         sm.setChatId(chatId);
         sm.setText(text);
