@@ -1,5 +1,6 @@
 package telegram;
 
+import model.Data;
 import model.FlatAvito;
 import model.Periods;
 import model.Yaxis;
@@ -12,13 +13,16 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MessageTG {
     public static SendMessage sendInlineKeyBoardMessageCity(String chatId){
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        for (String s: FlatAvito.link.keySet()) {
+        Set<String> links = new HashSet<>(Data.link.keySet());
+        for (String s: links) {
             List<InlineKeyboardButton> list = new ArrayList<>();
             InlineKeyboardButton ikb = new InlineKeyboardButton();
             ikb.setText(s);
@@ -35,7 +39,7 @@ public class MessageTG {
         inlineKeyboardMarkup.setKeyboard(rowList);
         SendMessage sm = new SendMessage();
         sm.setChatId(chatId);
-        sm.setText(", привет!\n" + " Выбери город");
+        sm.setText("Выбери город");
         sm.setReplyMarkup(inlineKeyboardMarkup);
         return sm;
     }
@@ -49,7 +53,7 @@ public class MessageTG {
         list.add(getInlineKeyboardButton("Год",String.valueOf(Periods.YEAR)));
         rowList.add(list);
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return getSendMessageWithKeyboard(chatId,"А теперь период",inlineKeyboardMarkup);
+        return getSendMessageWithKeyboard(chatId,"Выбери период",inlineKeyboardMarkup);
     }
     public static SendMessage sendInlineKeyBoardMessageYaxis(String chatId){
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
@@ -95,7 +99,7 @@ public class MessageTG {
         rowList.add(list7);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return getSendMessageWithKeyboard(chatId,"По какому параметру нужна статистика?",inlineKeyboardMarkup);
+        return getSendMessageWithKeyboard(chatId,"Выбери параметр, по которому нужна статистика",inlineKeyboardMarkup);
     }
 
 
@@ -115,7 +119,7 @@ public class MessageTG {
         row.add("Получить график");
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
-        return getSendMessageWithKeyboard(chatId,"Запрос обрабатывается",keyboardMarkup );
+        return getSendMessageWithKeyboard(chatId,"ᅠ ᅠ",keyboardMarkup );
     }
     public static SendMessage getSendMessageWithKeyboard(String chatId, String text, ReplyKeyboard replyKeyboard){
         SendMessage sm = new SendMessage();
@@ -129,6 +133,16 @@ public class MessageTG {
         SendMessage sm = new SendMessage();
         sm.setChatId(chatId);
         sm.setText(text);
+        return sm;
+    }
+    public static SendMessage sendStartMessage(User user) {
+        SendMessage sm = new SendMessage();
+        sm.setChatId(String.valueOf(user.getChatId()));
+        sm.setText("Привет, "+user.getUsername()+"\nЭтот Бот анализирует объявления на Авито и сохраняет информацию о разных показателях рынка недвижимости, а если его попросить, то нарисует тебе график.\n" +
+                "Что-бы Бот знал какой график нужно нарисовать, необходимо открыть меню и выбрать:\n" +
+                "Город - может быть один, несколько или все;\n" +
+                "Период - время, за которое будет собрана статистика;\n" +
+                "Параметр - критерий, по которому будет собрана статистика.\n");
         return sm;
     }
 }

@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class MessageReciever implements Runnable {
@@ -61,17 +62,20 @@ public class MessageReciever implements Runnable {
         System.out.println(user);
         System.out.println(chatId);
         if (user == null){
-            String username = message.getFrom().getFirstName()+" "+message.getFrom().getLastName();
-            user = new User(Long.valueOf(chatId),username);
+            String fname = message.getFrom().getFirstName();
+            String lname = message.getFrom().getLastName();
+            StringBuilder username = new StringBuilder();
+            username.append(fname);
+            if (lname!=null) username.append(" ").append(lname);
+            user = new User(Long.valueOf(chatId),username.toString());
             Data.settings.add(user);
         }
-        bot.sendQueue.add(MessageTG.getKeyboardButton(chatId));
         String finalInputText = inputText;
 
         if(inputText.equals("/start")){
-            user.getCity().clear();//////////////////////////////
+            bot.sendQueue.add(MessageTG.sendStartMessage(user));
         } else if (inputText.equals("/set_city")){
-            user.getCity().clear();
+            user.getCity().removeAll(Data.link.keySet());
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
         }else if (inputText.equals("/add_city")) {
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
@@ -101,7 +105,7 @@ public class MessageReciever implements Runnable {
             if (isSendPhoto) {
                 try {
                     SendPhoto photoMessage = new SendPhoto();
-                    photoMessage.setPhoto(TimeSeriesChart.getJpeg(user.getCity(), user.getParameter()));
+                    photoMessage.setPhoto(TimeSeriesChart.getJpeg(user.getCity(), user.getParameter(), user.parseParameter()));
                     photoMessage.setChatId(chatId);
                     bot.sendQueue.add(photoMessage);
                 } catch (IOException e) {
@@ -112,14 +116,15 @@ public class MessageReciever implements Runnable {
 
 
         // City
-        else if (FlatAvito.link.keySet().contains(inputText)){
-            user.getCity().add(inputText);
+        else if (Data.link.containsKey(inputText)){
+            if (user.getCity().stream().noneMatch(x ->x.equals(finalInputText))) {
+                user.getCity().add(inputText);
+            }
             bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Город добавлен"));
-            System.out.println(user.getPeriod());
         }
         // City
         else if (inputText.equals("All City")){
-            user.setCity(FlatAvito.link.keySet());
+            user.setCity(new HashSet<>(Data.link.keySet()));
             bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Города добавлены"));
         }
         // Parameter

@@ -24,10 +24,10 @@ import java.util.Set;
 
 public class TimeSeriesChart extends ApplicationFrame {
     JFreeChart chart;
-    public TimeSeriesChart(final String title, List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities, Yaxis yaxis) {
+    public TimeSeriesChart(final String title, List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities, Yaxis yaxis ) {
         super( title );
         XYDataset dataset = StatisticsFlatAvito.createTimeSeriesCollection(statisticsFlatAvitoList,cities, yaxis);
-        chart = createChart( dataset );
+        chart = createChart( dataset, title );
 
 //         Для создания окна
 //        final ChartPanel chartPanel = new ChartPanel( chart );
@@ -51,9 +51,9 @@ public class TimeSeriesChart extends ApplicationFrame {
 //        setContentPane( chartPanel );
     }
 
-    private JFreeChart createChart( final XYDataset dataset ) {
+    private JFreeChart createChart( final XYDataset dataset, String title ) {
         return ChartFactory.createTimeSeriesChart(
-                "Цены",
+                title,
                 "",
                 "",
                 dataset,
@@ -62,12 +62,9 @@ public class TimeSeriesChart extends ApplicationFrame {
                 false);
     }
 
-    public static InputFile getJpeg(Set<String> cities,Yaxis yaxis) throws IOException {
+    public static InputFile getJpeg(Set<String> cities,Yaxis yaxis, String title) throws IOException {
         StatisticsFlatAvitoDAO statisticsFlatAvitoDAO = new StatisticsFlatAvitoDAO();
-        String title = "Статистика квартир с авито";
-        TimeSeriesChart timeSeriesChart = null;
-        timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities), cities, yaxis);
-
+        TimeSeriesChart timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities), cities, yaxis);;
 
         int width = 3472/5;
         int height = 4624/5;

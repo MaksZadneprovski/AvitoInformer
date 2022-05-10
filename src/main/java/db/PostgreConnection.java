@@ -12,8 +12,8 @@ public class PostgreConnection {
     public static Connection getFlatAvitoConnection(){
             try {
                 Class.forName("org.postgresql.Driver");
-                String url = "jdbc:postgresql://46.173.219.119:5432/avito";
-                String login = "avito";
+                String url = "jdbc:postgresql://194.87.95.85:5432/root";
+                String login = "root";
                 String password = "root";
                 DbConnection = DriverManager.getConnection(url, login, password);
             } catch (ClassNotFoundException e) {
