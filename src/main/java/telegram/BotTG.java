@@ -51,9 +51,11 @@ public class BotTG extends TelegramLongPollingBot {
     public void botConnect()  {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            System.out.println(this);
             telegramBotsApi.registerBot(this);
         } catch (Exception e) {
             try {
+                e.printStackTrace();
                 Thread.sleep(RECONNECT_PAUSE);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();

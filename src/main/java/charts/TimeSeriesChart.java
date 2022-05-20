@@ -2,6 +2,7 @@ package charts;
 
 import db.StatisticsFlatAvitoDAO;
 import model.FlatAvito;
+import model.Periods;
 import model.StatisticsFlatAvito;
 import model.Yaxis;
 import org.jfree.chart.ChartFactory;
@@ -22,10 +23,9 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Set;
 
-public class TimeSeriesChart extends ApplicationFrame {
+public class TimeSeriesChart {
     JFreeChart chart;
     public TimeSeriesChart(final String title, List<StatisticsFlatAvito> statisticsFlatAvitoList, Set<String> cities, Yaxis yaxis ) {
-        super( title );
         XYDataset dataset = StatisticsFlatAvito.createTimeSeriesCollection(statisticsFlatAvitoList,cities, yaxis);
         chart = createChart( dataset, title );
 
@@ -62,9 +62,9 @@ public class TimeSeriesChart extends ApplicationFrame {
                 false);
     }
 
-    public static InputFile getJpeg(Set<String> cities,Yaxis yaxis, String title) throws IOException {
+    public static InputFile getJpeg(Set<String> cities, Yaxis yaxis, String title, Periods periods) throws IOException {
         StatisticsFlatAvitoDAO statisticsFlatAvitoDAO = new StatisticsFlatAvitoDAO();
-        TimeSeriesChart timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities), cities, yaxis);;
+        TimeSeriesChart timeSeriesChart = new TimeSeriesChart(title, statisticsFlatAvitoDAO.getDataList(cities, periods), cities, yaxis);;
 
         int width = 3472/5;
         int height = 4624/5;

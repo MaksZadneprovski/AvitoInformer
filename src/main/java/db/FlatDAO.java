@@ -10,7 +10,7 @@ public class FlatDAO {
         try {
             Statement statement = PostgreConnection.getFlatAvitoConnection().createStatement();
             for (String city : cities) {
-                ResultSet rs = statement.executeQuery("SELECT price,href FROM flat WHERE city = '"+ city +"Добавить Период недавно';");
+                ResultSet rs = statement.executeQuery("SELECT price,href FROM flat WHERE city = '"+ city +"' AND date > current_date - integer  '3';");
                 while (rs.next()) {
                     treeMap.put(rs.getLong(1),rs.getString(2));
                 }
@@ -22,9 +22,13 @@ public class FlatDAO {
         }
         List<String> topList = new ArrayList<>();
         Set<Long> keySet = treeMap.keySet();
-        for (int i = 0; i < 21; i++) {
-            Long key = (Long) keySet.toArray()[i];
-            topList.add(treeMap.get(key));
+        for (int i = 0; i < 20; i++) {
+            try {
+                Long key = (Long) keySet.toArray()[i];
+                topList.add(treeMap.get(key));
+            }catch (Exception e){
+                System.out.println("hueta");
+            }
         }
         return topList;
     }

@@ -1,6 +1,8 @@
 package db;
 
+import model.Periods;
 import model.StatisticsFlatAvito;
+import model.Yaxis;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,12 +43,24 @@ public class StatisticsFlatAvitoDAO {
         return sFAList;
     }
 
-    public List<StatisticsFlatAvito> getDataList(Set<String> cities) {
+    public List<StatisticsFlatAvito> getDataList(Set<String> cities, Periods period) {
         List<StatisticsFlatAvito> sFAList = new ArrayList<>();
+        String per = "365";
+        switch (period){
+            case WEEK:
+                per = "7";
+                break;
+            case MONTH:
+                per = "31";
+                break;
+            case HALF_YEAR:
+                per = "183";
+                break;
+        }
         try {
             Statement st = PostgreConnection.getFlatAvitoConnection().createStatement();
             for (String city : cities) {
-                ResultSet resultSet = st.executeQuery("SELECT * from statistics WHERE city = '"+ city +"';");
+                ResultSet resultSet = st.executeQuery("SELECT * from statistics WHERE city = '"+ city +"' AND date > current_date - integer  '"+per+"';");
                 while (resultSet.next()){
                     sFAList.add(new StatisticsFlatAvito(
                             resultSet.getInt(2),

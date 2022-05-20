@@ -63,39 +63,46 @@ public class MessageTG {
         rowList.add(list0);
         List<InlineKeyboardButton> list1 = new ArrayList<>();
         list1.add(getInlineKeyboardButton("Медианная цена квартир",String.valueOf(Yaxis.MedianPrice)));
-
         rowList.add(list1);
+
         List<InlineKeyboardButton> list2 = new ArrayList<>();
-        list2.add(getInlineKeyboardButton("Ср-яя цена 1-к кв.",String.valueOf(Yaxis.AveragePrice1)));
-
-        list2.add(getInlineKeyboardButton("Мед-ая цена 1-к кв.",String.valueOf(Yaxis.MedianPrice1)));
-
+        list2.add(getInlineKeyboardButton("Средняя цена 1-к кв.",String.valueOf(Yaxis.AveragePrice1)));
         rowList.add(list2);
+
+        List<InlineKeyboardButton> list21 = new ArrayList<>();
+        list21.add(getInlineKeyboardButton("Медианная цена 1-к кв.",String.valueOf(Yaxis.MedianPrice1)));
+        rowList.add(list21);
+
         List<InlineKeyboardButton> list3 = new ArrayList<>();
-        list3.add(getInlineKeyboardButton("Ср-яя цена 2-к кв.",String.valueOf(Yaxis.AveragePrice2)));
-
-        list3.add(getInlineKeyboardButton("Мед-ая цена 2-к кв.",String.valueOf(Yaxis.MedianPrice2)));
-
+        list3.add(getInlineKeyboardButton("Средняя цена 2-к кв.",String.valueOf(Yaxis.AveragePrice2)));
         rowList.add(list3);
+
+        List<InlineKeyboardButton> list31 = new ArrayList<>();
+        list31.add(getInlineKeyboardButton("Медианная цена 2-к кв.",String.valueOf(Yaxis.MedianPrice2)));
+        rowList.add(list31);
+
         List<InlineKeyboardButton> list4 = new ArrayList<>();
-        list4.add(getInlineKeyboardButton("Ср-яя цена 3-к кв.",String.valueOf(Yaxis.AveragePrice3)));
-
-        list4.add(getInlineKeyboardButton("Мед-ая цена 3-к кв.",String.valueOf(Yaxis.MedianPrice3)));
-
+        list4.add(getInlineKeyboardButton("Средняя цена 3-к кв.",String.valueOf(Yaxis.AveragePrice3)));
         rowList.add(list4);
+
+        List<InlineKeyboardButton> list41 = new ArrayList<>();
+        list41.add(getInlineKeyboardButton("Медианная цена 3-к кв.",String.valueOf(Yaxis.MedianPrice3)));
+        rowList.add(list41);
+
         List<InlineKeyboardButton> list5 = new ArrayList<>();
-        list5.add(getInlineKeyboardButton("Ср-яя цена за кв.м.",String.valueOf(Yaxis.AveragePriceMeter)));
-
-        list5.add(getInlineKeyboardButton("Мед-ая цена за кв.м.",String.valueOf(Yaxis.MedianPriceMeter)));
-
+        list5.add(getInlineKeyboardButton("Средняя цена за кв.м.",String.valueOf(Yaxis.AveragePriceMeter)));
         rowList.add(list5);
+
+        List<InlineKeyboardButton> list51 = new ArrayList<>();
+        list51.add(getInlineKeyboardButton("Медианная цена за кв.м.",String.valueOf(Yaxis.MedianPriceMeter)));
+        rowList.add(list51);
+
         List<InlineKeyboardButton> list6 = new ArrayList<>();
         list6.add(getInlineKeyboardButton("Кол-во объявлений",String.valueOf(Yaxis.CountFlats)));
-
         rowList.add(list6);
-        List<InlineKeyboardButton> list7 = new ArrayList<>();
-        list7.add(getInlineKeyboardButton("Top-20","Top"));
 
+        List<InlineKeyboardButton> list7 = new ArrayList<>();
+        list7.add(getInlineKeyboardButton("Отличие медианной от средней", "difference"));
         rowList.add(list7);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
@@ -138,11 +145,13 @@ public class MessageTG {
     public static SendMessage sendStartMessage(User user) {
         SendMessage sm = new SendMessage();
         sm.setChatId(String.valueOf(user.getChatId()));
-        sm.setText("Привет, "+user.getUsername()+"\nЭтот Бот анализирует объявления на Авито и сохраняет информацию о разных показателях рынка недвижимости, а если его попросить, то нарисует тебе график.\n" +
-                "Что-бы Бот знал какой график нужно нарисовать, необходимо открыть меню и выбрать:\n" +
-                "Город - может быть один, несколько или все;\n" +
-                "Период - время, за которое будет собрана статистика;\n" +
-                "Параметр - критерий, по которому будет собрана статистика.\n");
+        sm.setText("Привет, "+user.getUsername()+"\n\nЭтот Бот анализирует объявления на Авито и сохраняет информацию о разных показателях рынка недвижимости, а если его попросить, то нарисует тебе график.\n" +
+                "Чтобы Бот знал какой график нужно нарисовать, необходимо открыть меню и выбрать:\n" +
+                "\nГород - может быть один, несколько или все;\n\n" +
+                "Период - время, за которое будет собрана статистика;\n\n" +
+                "Тип графика - критерий, по которому будет собрана статистика.\n\n"+
+                "После нужно открыть меню и нажать \"Получить график\""
+        );
         return sm;
     }
 }

@@ -74,7 +74,7 @@ public class MessageReciever implements Runnable {
 
         if(inputText.equals("/start")){
             bot.sendQueue.add(MessageTG.sendStartMessage(user));
-        } else if (inputText.equals("/set_city")){
+        }else if (inputText.equals("/set_city")){
             user.getCity().removeAll(Data.link.keySet());
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
         }else if (inputText.equals("/add_city")) {
@@ -92,11 +92,11 @@ public class MessageReciever implements Runnable {
                 isSendPhoto = false;
 
             }if (user.getPeriod() == null){
-                stringBuilder.append("Выбери период\n");
+                stringBuilder.append("Выбери временной период\n");
                 isSendPhoto = false;
 
             }if (user.getParameter() == null){
-                stringBuilder.append("Выбери параметр\n");
+                stringBuilder.append("Выбери тип графика\n");
                 isSendPhoto = false;
 
             }if (stringBuilder.length()>25){
@@ -105,12 +105,31 @@ public class MessageReciever implements Runnable {
             if (isSendPhoto) {
                 try {
                     SendPhoto photoMessage = new SendPhoto();
-                    photoMessage.setPhoto(TimeSeriesChart.getJpeg(user.getCity(), user.getParameter(), user.parseParameter()));
+                    photoMessage.setPhoto(TimeSeriesChart.getJpeg(user.getCity(), user.getParameter(), user.parseParameter(), user.getPeriod()));
                     photoMessage.setChatId(chatId);
                     bot.sendQueue.add(photoMessage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }else if (inputText.equals("/get_parameters")) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Город : ").append(user.getCity()).append("\n\nПериод : ").append(user.parsePeriod()).append("\n\nТип : ").append(user.parseParameter());
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId,sb.toString()));
+        }
+        else if (inputText.equals("/get_top")){
+            FlatDAO flatDAO = new FlatDAO();
+            if (user.getCity().size()>0) {
+                try {
+                    List<String> listTop = flatDAO.getTopList(user.getCity());
+                    for (String s : listTop) {
+                        bot.sendQueue.add(MessageTG.sendMyMessage(chatId, s));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                bot.sendQueue.add(MessageTG.sendMyMessage(chatId,"Сначала выбери город"));
             }
         }
 
@@ -137,18 +156,10 @@ public class MessageReciever implements Runnable {
             user.setPeriod(Periods.valueOf(inputText));
             bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Период установлен"));
         }
-        // Top 20
-        else if(inputText.equals("Top")){
-            // Нужно вывести только имеющиеся
-            FlatDAO flatDAO = new FlatDAO();
-            try {
-                List<String> listTop = flatDAO.getTopList(user.getCity());
-                for (String s : listTop) {
-                    bot.sendQueue.add(MessageTG.sendMyMessage(chatId,s));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        else if (inputText.equals("difference")){
+            bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "" +
+                    "Среднее арифметическое набора данных находится суммированием всех чисел в выборке и делением полученной суммы на количество чисел.\n\n" +
+                    "Медиана — это число, которое окажется строго по центру списка чисел в наборе данных, если их предварительно упорядочить по возрастанию."));
         }
     }
 }

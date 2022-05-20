@@ -28,7 +28,7 @@ public class User {
         if (this.getParameter()!=null) {
             switch (this.getParameter()){
                 case AveragePrice3:
-                    s = "Средняя цена 3-к. квартиры ";
+                    s = "Средняя цена 3-к. квартиры";
                     break;
                 case AveragePrice2:
                     s = "Средняя цена 2-к. квартиры";
@@ -62,6 +62,26 @@ public class User {
                     break;
             }
         }
-        return "";
+        return s;
+    }
+    public  String parsePeriod() {
+        String s = "";
+        if (this.getParameter() != null) {
+            switch (this.getPeriod()) {
+                case WEEK:
+                    s = "Неделя";
+                    break;
+                case MONTH:
+                    s = "Месяц";
+                    break;
+                case HALF_YEAR:
+                    s = "Пол года";
+                    break;
+                case YEAR:
+                    s = "Год";
+                    break;
+            }
+        }
+        return s;
     }
 }
