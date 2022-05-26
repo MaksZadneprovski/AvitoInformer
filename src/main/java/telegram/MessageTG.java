@@ -1,7 +1,6 @@
 package telegram;
 
 import model.Data;
-import model.FlatAvito;
 import model.Periods;
 import model.Yaxis;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,19 +8,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MessageTG {
     public static SendMessage sendInlineKeyBoardMessageCity(String chatId){
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Set<String> links = new HashSet<>(Data.link.keySet());
+        Set<String> links = new TreeSet<>(Data.getLinks().keySet());
         for (String s: links) {
             List<InlineKeyboardButton> list = new ArrayList<>();
             InlineKeyboardButton ikb = new InlineKeyboardButton();

@@ -3,7 +3,6 @@ package telegram;
 import charts.TimeSeriesChart;
 import db.FlatDAO;
 import model.Data;
-import model.FlatAvito;
 import model.Periods;
 import model.Yaxis;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -75,7 +74,7 @@ public class MessageReciever implements Runnable {
         if(inputText.equals("/start")){
             bot.sendQueue.add(MessageTG.sendStartMessage(user));
         }else if (inputText.equals("/set_city")){
-            user.getCity().removeAll(Data.link.keySet());
+            user.getCity().removeAll(Data.getLinks().keySet());
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
         }else if (inputText.equals("/add_city")) {
             bot.sendQueue.add(MessageTG.sendInlineKeyBoardMessageCity(chatId));
@@ -135,7 +134,7 @@ public class MessageReciever implements Runnable {
 
 
         // City
-        else if (Data.link.containsKey(inputText)){
+        else if (Data.getLinks().containsKey(inputText)){
             if (user.getCity().stream().noneMatch(x ->x.equals(finalInputText))) {
                 user.getCity().add(inputText);
             }
@@ -143,7 +142,7 @@ public class MessageReciever implements Runnable {
         }
         // City
         else if (inputText.equals("All City")){
-            user.setCity(new HashSet<>(Data.link.keySet()));
+            user.setCity(new HashSet<>(Data.getLinks().keySet()));
             bot.sendQueue.add(MessageTG.sendMyMessage(chatId, "Города добавлены"));
         }
         // Parameter
