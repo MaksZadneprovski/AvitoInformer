@@ -10,17 +10,17 @@ public class PostgreConnection {
     private static Connection DbConnection;
 
     public static Connection getFlatAvitoConnection(){
+        if (DbConnection == null) {
             try {
                 Class.forName("org.postgresql.Driver");
                 String url = "jdbc:postgresql://194.87.95.85:5432/root";
                 String login = "root";
                 String password = "root";
                 DbConnection = DriverManager.getConnection(url, login, password);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
+            } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }
+        }
 
         return DbConnection;
     }
